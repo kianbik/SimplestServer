@@ -14,6 +14,8 @@ public class NetworkedServer : MonoBehaviour
     int hostID;
     int socketPort = 5491;
 
+    LinkedList<PlayerAccount> playerAccounts;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -23,7 +25,10 @@ public class NetworkedServer : MonoBehaviour
         unreliableChannelID = config.AddChannel(QosType.Unreliable);
         HostTopology topology = new HostTopology(config, maxConnections);
         hostID = NetworkTransport.AddHost(topology, socketPort, null);
-        
+
+
+        playerAccounts = new LinkedList<PlayerAccount>();
+        //Read in player account
     }
 
     // Update is called once per frame
@@ -68,6 +73,86 @@ public class NetworkedServer : MonoBehaviour
     private void ProcessRecievedMsg(string msg, int id)
     {
         Debug.Log("msg recieved = " + msg + ".  connection id = " + id);
+
+        string[] csv = msg.Split(',');
+        int signifier = int.Parse(csv[0]);
+
+        if (signifier == clientToServerSignifier.CreateAccount)
+        {
+            //check if player account name is already exists
+            string n = csv[1];
+            string p = csv[2];
+            bool nameIsInUse = false;
+
+            foreach (PlayerAccount pa in playerAccounts)
+            {
+                if(pa.name == n)
+                {
+                    nameIsInUse = true;
+                    break;
+                }
+            }
+
+            if(nameIsInUse)
+            {
+
+                SendMessageToClient(ServerToClientSignifiers.AcountCreationFailed + "", id); )
+           
+            }
+            else
+            {
+                PlayerAccount newPlayerAccount = new PlayerAccount(n, p);
+                playerAccounts.AddLast(newPlayerAccount);
+                SendMessageToClient(ServerToClientSignifiers.AcountCreationComplete + "", id);
+                //Save list to hd
+            }
+        }
+        else if (signifier == clientToServerSignifier.Login)
+        {
+            
+        }
+        
+
     }
+
+}
+
+public class PlayerAccount
+{
+    public string name, password;
+
+    public PlayerAccount(string Name, string Password)
+    {
+        name = Name;
+        password = Password;
+    }
+}
+
+public static class ClientToServerSignifiers
+{
+
+    public const int CreateAccount = 1;
+
+    public const int Login = 2;
+
+
+
+
+
+}
+
+public static class ServerToClientSignifiers
+{
+
+    public const int LoginComplete = 1;
+
+    public const int LoginFailed = 2;
+
+    public const int AcountCreationComplete = 3;
+
+    public const int AcountCreationFailed = 4;
+
+
+
 
 }
