@@ -9,15 +9,31 @@ using UnityEngine.UI;
 public class NetworkedServer : MonoBehaviour
 {
     int maxConnections = 1000;
+
     int reliableChannelID;
+
     int unreliableChannelID;
+
     int hostID;
+
     int socketPort = 5491;
 
+
     LinkedList<PlayerAccount> playerAccounts;
+
     const int PlayerAccountNameAndPassword = 1;
 
+
     string playerAccountsFilePath; 
+
+
+    GameRoom
+
+
+
+
+
+
     // Start is called before the first frame update
     void Start()
     {
@@ -206,6 +222,24 @@ public class PlayerAccount
         name = Name;
         password = Password;
     }
+}
+
+
+
+public class GameRoom
+{
+    public PlayerAccount player1, player2;
+
+
+
+
+
+
+
+
+
+
+
 }
 
 public static class ClientToServerSignifiers
