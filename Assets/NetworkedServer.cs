@@ -16,7 +16,7 @@ public class NetworkedServer : MonoBehaviour
 
     int hostID;
 
-    int socketPort =6009;
+    int socketPort = 5491;
 
 
     LinkedList<PlayerAccount> playerAccounts;
@@ -30,8 +30,6 @@ public class NetworkedServer : MonoBehaviour
     int playerWaitingForMatchWithId = -1;
 
     LinkedList<GameRoom> gameRooms;
-
-
 
 
 
@@ -96,14 +94,7 @@ public class NetworkedServer : MonoBehaviour
                 break;
         }
 
-        var host = System.Net.Dns.GetHostEntry(System.Net.Dns.GetHostName());
-        foreach (var ip in host.AddressList)
-        {
-            if (ip.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)
-            {
-                Debug.Log( ip.ToString());
-            }
-        }
+      
 
         
     }
@@ -141,14 +132,14 @@ public class NetworkedServer : MonoBehaviour
             if (nameIsInUse)
             {
 
-                SendMessageToClient(ServerToClientSignifiers.AcountCreationFailed + "", id);
+                SendMessageToClient(ServerToClientSignifiers.AccountCreationFailed + "", id);
 
             }
             else
             {
                 PlayerAccount newPlayerAccount = new PlayerAccount(n, p);
                 playerAccounts.AddLast(newPlayerAccount);
-                SendMessageToClient(ServerToClientSignifiers.AcountCreation + "", id);
+                SendMessageToClient(ServerToClientSignifiers.AccountCreated + "", id);
 
 
                 SavePlayerAccounts();
@@ -388,8 +379,8 @@ public class NetworkedServer : MonoBehaviour
 
     public PlayerAccount(string Name, string Password)
     {
-        name = Name;
-        password = Password;
+        this.name = Name;
+        this.password = Password;
     }
 }
 
@@ -421,19 +412,19 @@ public static class ClientToServerSignifiers
 {
 
     public const int CreateAccount = 1;
-
     public const int Login = 2;
-
     public const int JoinGameRoomQueue = 3;
-
     public const int SelectedTicTacToeSquare = 4;
-    public const int JoinAnyRoomAsObserver = 5;
-    public const int JoinSpecificRoomAsObserver = 6;
-    public const int EndingTheGame = 7;
-    public const int LeaveTheRoom = 8;
 
-    public const int RequestTurnData = 9;
+    public const int ChatLogMessage = 8;
 
+    public const int JoinAnyRoomAsObserver = 9;
+    public const int JoinSpecificRoomAsObserver = 10;
+
+    public const int EndingTheGame = 11;
+    public const int LeaveTheRoom = 12;
+
+    public const int RequestTurnData = 14;
 
 
 }
@@ -442,23 +433,21 @@ public static class ServerToClientSignifiers
 {
 
     public const int LoginComplete = 1;
-
     public const int LoginFailed = 2;
 
-    public const int AcountCreation = 3;
-
-    public const int AcountCreationFailed = 4;
+    public const int AccountCreated = 3;
+    public const int AccountCreationFailed = 4;
 
     public const int GameStart = 5;
 
     public const int ChosenAsPlayerOne = 6;
     public const int OpponentChoseASquare = 7;
 
-    public const int GameIsOver = 8;
+    public const int ChatLogMessage = 11;
 
-    public const int TurnData = 9;
-    public const int EnteredGameRoomAsObserver = 10;
+    public const int EnteredGameRoomAsObserver = 12;
 
-
+    public const int GameIsOver = 13;
+    public const int TurnData = 14;
 
 }
